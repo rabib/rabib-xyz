@@ -1,0 +1,21 @@
+---
+import { siteConfig } from '../data/site-config';
+
+const { showSocial = true, archivePlacement = 'corner' } = Astro.props;
+---
+
+<footer>
+    <div class="container footer-grid">
+        {
+            showSocial && (
+                <div class="footer-links">
+                    {siteConfig.socialLinks.map((link) => (
+                        <a class="plain" href={link.href} target="_blank" rel="noopener">{link.text}</a>
+                    ))}
+                </div>
+            )
+        }
+        {archivePlacement === 'inline' && <a class="plain quiet-link" href="/blog/">Archive</a>}
+    </div>
+    {archivePlacement === 'corner' && <a class="plain quiet-link corner-archive" href="/blog/">Archive</a>}
+</footer>

@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate } from '../../utils/format-date';
+
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout title="Writing" description="Essays and fragments shaped by stillness.">
+    <section class="page-hero reveal">
+        <div class="meta-strip">
+            <span class="meta-dot"></span>
+            <span>Archive</span>
+        </div>
+        <h1>Writing</h1>
+        <p>Essays and fragments shaped by stillness.</p>
+    </section>
+
+    <section class="reveal delay-1">
+        <div class="post-list">
+            {sortedPosts.map((post) => (
+                <a class="post-card plain" href={`/blog/${post.slug}/`}>
+                    <div class="date">{formatDate(post.data.publishDate)}</div>
+                    <h3>{post.data.title}</h3>
+                    {post.data.excerpt && <p>{post.data.excerpt}</p>}
+                </a>
+            ))}
+        </div>
+    </section>
+</BaseLayout>

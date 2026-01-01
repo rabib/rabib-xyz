@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import { ViewTransitions } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../data/site-config';
+
+const { title, description, image, showNav = true, footerShowSocial = true, footerArchivePlacement = 'corner' } =
+    Astro.props;
+const metaTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
+const metaDescription = description ?? siteConfig.description;
+const metaImage = image ?? '/images/painful-truth.jpg';
+const canonicalUrl = new URL(Astro.request.url, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={new URL(metaImage, Astro.site)} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={new URL(metaImage, Astro.site)} />
+        <ViewTransitions />
+    </head>
+    <body>
+        <div id="background-layer" class="background-layer" transition:persist aria-hidden="true"></div>
+        <div class="site-shell">
+            {showNav && <Nav />}
+            <main class="container">
+                <slot />
+            </main>
+            <Footer showSocial={footerShowSocial} archivePlacement={footerArchivePlacement} />
+        </div>
+        <script>
+            (() => {
+                if (window.__nebulaLoop) {
+                    return;
+                }
+                const layer = document.getElementById('background-layer');
+                if (!layer) {
+                    return;
+                }
+                const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+                const setPositions = () => {
+                    const t = Date.now() / 1000;
+                    const sx = Math.sin(t * 0.015) * 60;
+                    const sy = Math.cos(t * 0.012) * 90;
+
+                    layer.style.setProperty('--star-x', `${sx.toFixed(1)}px`);
+                    layer.style.setProperty('--star-y', `${sy.toFixed(1)}px`);
+                };
+
+                const tick = () => {
+                    setPositions();
+                    window.__nebulaLoop = window.requestAnimationFrame(tick);
+                };
+
+                const start = () => {
+                    if (!window.__nebulaLoop) {
+                        tick();
+                    }
+                };
+
+                const stop = () => {
+                    if (window.__nebulaLoop) {
+                        window.cancelAnimationFrame(window.__nebulaLoop);
+                        window.__nebulaLoop = 0;
+                    }
+                };
+
+                setPositions();
+                if (!prefersReduced.matches) {
+                    start();
+                }
+
+                prefersReduced.addEventListener('change', () => {
+                    if (prefersReduced.matches) {
+                        stop();
+                    } else {
+                        start();
+                    }
+                });
+            })();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+---
+import { siteConfig } from '../data/site-config';
+---
+
+<header class="container">
+    <nav class="nav">
+        <a class="brand plain" href="/">{siteConfig.title}</a>
+        {
+            siteConfig.navLinks.length > 0 && (
+                <div class="nav-links">
+                    {siteConfig.navLinks.map((link) => (
+                        <a class="plain" href={link.href}>{link.text}</a>
+                    ))}
+                </div>
+            )
+        }
+    </nav>
+</header>

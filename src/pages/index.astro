@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../data/site-config';
+---
+
+<BaseLayout showNav={false} footerShowSocial={false}>
+    <section class="landing reveal">
+        <div class="landing-inner">
+            <h1 class="landing-title">{siteConfig.title}</h1>
+            <div class="landing-links">
+                {siteConfig.socialLinks.map((link) => (
+                    <a class="plain" href={link.href} target="_blank" rel="noopener">{link.text}</a>
+                ))}
+            </div>
+        </div>
+    </section>
+</BaseLayout>
